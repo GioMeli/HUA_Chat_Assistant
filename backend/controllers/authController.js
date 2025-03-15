@@ -1,33 +1,70 @@
-const db = require('../db');
+const db = require("../db");
+const bcrypt = require("bcryptjs"); // Import bcrypt for password hashing
 
-exports.register = (req, res) => {
+// REGISTER USER
+exports.register = async (req, res) => {
     const { username, password } = req.body;
-    if (!username.startsWith('it')) {
+
+    if (!username.startsWith("it")) {
         return res.status(400).json({ message: 'Username must start with "it"' });
     }
-    const sql = "INSERT INTO users (username, password) VALUES (?, ?)";
-    db.query(sql, [username, password], (err) => {
-        if (err) return res.status(500).json(err);
-        res.json({ message: 'Account created, please Sign In' });
-    });
+
+    try {
+        // Check if user already exists
+        db.query("SELECT * FROM users WHERE username = ?", [username], async (err, result) => {
+            if (err) return res.status(500).json({ message: "Database error", error: err });
+
+            if (result.length > 0) {
+                return res.status(400).json({ message: "Username already exists" });
+            }
+
+            // Hash the password before saving
+            const hashedPassword = await bcrypt.hash(password, 10);
+
+            // Save user to database
+            const sql = "INSERT INTO users (username, password) VALUES (?, ?)";
+            db.query(sql, [username, hashedPassword], (err) => {
+                if (err) return res.status(500).json({ message: "Database error", error: err });
+                res.status(201).json({ message: "Account created, please Sign In" });
+            });
+        });
+    } catch (error) {
+        res.status(500).json({ message: "Server error", error });
+    }
 };
 
+// LOGIN USER
 exports.login = (req, res) => {
     const { username, password } = req.body;
-    const sql = "SELECT * FROM users WHERE username = ? AND password = ?";
-    db.query(sql, [username, password], (err, result) => {
-        if (err) return res.status(500).json(err);
-        if (result.length > 0) {
-            req.session.user = result[0];
-            res.json({ message: 'Login successful', user: result[0] });
-        } else {
-            res.status(400).json({ message: 'Invalid credentials' });
+
+    const sql = "SELECT * FROM users WHERE username = ?";
+    db.query(sql, [username], async (err, result) => {
+        if (err) return res.status(500).json({ message: "Database error", error: err });
+
+        if (result.length === 0) {
+            return res.status(400).json({ message: "Invalid username or password" });
         }
+
+        const user = result[0];
+
+        // Compare hashed passwords
+        const passwordMatch = await bcrypt.compare(password, user.password);
+        if (!passwordMatch) {
+            return res.status(400).json({ message: "Invalid username or password" });
+        }
+
+        // Set user session
+        req.session.user = { id: user.id, username: user.username };
+        res.json({ message: "Login successful", user: req.session.user });
     });
 };
 
+// LOGOUT USER
 exports.logout = (req, res) => {
-    req.session.destroy();
-    res.json({ message: 'Logged out successfully' });
+    req.session.destroy((err) => {
+        if (err) {
+            return res.status(500).json({ message: "Logout failed", error: err });
+        }
+        res.json({ message: "Logged out successfully" });
+    });
 };
-
