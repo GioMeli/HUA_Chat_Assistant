@@ -1,17 +1,96 @@
-.container {
-    text-align: center;
-    padding: 20px;
+/* General Page Styling */
+body, html {
+    margin: 0;
+    padding: 0;
+    font-family: 'Arial', sans-serif;
+    background-color: #f4f4f4;
 }
 
-.chat-container {
-    max-width: 600px;
-    margin: auto;
-    text-align: center;
+/* Full-Screen Blue Container */
+.home-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background: linear-gradient(to right, #007bff, #0056b3);
 }
 
-.chat-box {
-    border: 1px solid #ddd;
-    padding: 10px;
-    height: 300px;
-    overflow-y: auto;
+/* Login Box Styling */
+.login-box {
+    background: white;
+    padding: 40px;
+    border-radius: 12px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    width: 350px;
 }
+
+/* Title and Subtitle */
+.title {
+    font-size: 24px;
+    font-weight: bold;
+    color: #333;
+}
+
+.subtitle {
+    font-size: 14px;
+    color: #777;
+    margin-bottom: 20px;
+}
+
+/* Input Fields */
+.input-field {
+    width: 100%;
+    padding: 12px;
+    margin: 8px 0;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    font-size: 16px;
+}
+
+/* Buttons Styling */
+.buttons {
+    margin-top: 20px;
+}
+
+.primary-btn, .secondary-btn, .guest-btn {
+    width: 100%;
+    padding: 12px;
+    margin-top: 10px;
+    font-size: 16px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+/* Primary Button - Sign In */
+.primary-btn {
+    background-color: #007bff;
+    color: white;
+}
+
+.primary-btn:hover {
+    background-color: #0056b3;
+}
+
+/* Secondary Button - Create Account */
+.secondary-btn {
+    background-color: #28a745;
+    color: white;
+}
+
+.secondary-btn:hover {
+    background-color: #218838;
+}
+
+/* Guest Button */
+.guest-btn {
+    background-color: #6c757d;
+    color: white;
+}
+
+.guest-btn:hover {
+    background-color: #5a6268;
+}
+
