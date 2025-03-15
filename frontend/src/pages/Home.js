@@ -1,6 +1,6 @@
 // src/components/Home.js
 import React, { useState } from "react";
-import "../styles/Home.css";
+import "../public/styles.css";
 
 const Home = ({ onSignIn, onRegister, onGuest }) => {
   const [username, setUsername] = useState("");
