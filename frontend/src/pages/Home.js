@@ -1,31 +1,43 @@
-// src/components/Home.js
 import React, { useState } from "react";
-import "../public/styles.css";
+import { useNavigate } from "react-router-dom";
+import "../styles.css"; // Ensure the correct path for your CSS
 
-const Home = ({ onSignIn, onRegister, onGuest }) => {
+const Home = ({ onSignIn, onGuest }) => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const navigate = useNavigate(); // Hook to navigate to Register page
 
   return (
     <div className="home-container">
-      <h1 className="title">Welcome to HUA Chat Assistant</h1>
       <div className="login-box">
+        <h1 className="title">Welcome to HUA Chat Assistant</h1>
+        <p className="subtitle">Your AI-powered chat companion</p>
+
         <input
           type="text"
-          placeholder="Username"
+          placeholder="Enter your Username"
           value={username}
           onChange={(e) => setUsername(e.target.value)}
+          className="input-field"
         />
         <input
           type="password"
-          placeholder="Password"
+          placeholder="Enter your Password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
+          className="input-field"
         />
+
         <div className="buttons">
-          <button onClick={() => onSignIn(username, password)}>Sign In</button>
-          <button onClick={() => onRegister(username, password)}>Create Account</button>
-          <button className="guest-btn" onClick={onGuest}>Continue as Guest</button>
+          <button className="primary-btn" onClick={() => onSignIn(username, password)}>
+            Sign In
+          </button>
+          <button className="secondary-btn" onClick={() => navigate("/register")}>
+            Create Account
+          </button>
+          <button className="guest-btn" onClick={onGuest}>
+            Continue as Guest
+          </button>
         </div>
       </div>
     </div>
@@ -33,3 +45,4 @@ const Home = ({ onSignIn, onRegister, onGuest }) => {
 };
 
 export default Home;
+
