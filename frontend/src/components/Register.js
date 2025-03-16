@@ -1,57 +1,36 @@
-import React, { useState } from "react"; 
-import axios from "axios";
-import { useNavigate } from "react-router-dom";
+const bcrypt = require('bcrypt');
+const db = require('../config/db');
 
-const Register = () => {
-    const [username, setUsername] = useState("");
-    const [password, setPassword] = useState("");
-    const [message, setMessage] = useState("");
-    const navigate = useNavigate(); // To navigate to Sign In after success
+const register = async (req, res) => {
+    const { username, password } = req.body;
 
-    const handleRegister = async () => {
-        if (!username.startsWith("it")) {
-            setMessage("Username must start with 'it'.");
-            return;
+    if (!username || !password) {
+        return res.status(400).json({ message: 'All fields are required' });
+    }
+
+    try {
+        // Check if username already exists
+        const [existingUser] = await db.query('SELECT * FROM users WHERE username = ?', [username]);
+        if (existingUser.length > 0) {
+            return res.status(400).json({ message: 'Username already taken' });
         }
 
-        try {
-            const response = await axios.post("http://localhost:5000/register", {
-                username,
-                password
-            });
+        // Hash the password
+        const hashedPassword = await bcrypt.hash(password, 10);
 
-            if (response.status === 201) {
-                setMessage("Registration successful! Redirecting...");
-                setTimeout(() => navigate("/"), 2000); // Redirect after 2 sec
-            } else {
-                setMessage(response.data.message || "Registration failed");
-            }
-        } catch (error) {
-            console.error("Registration Error:", error);
-            setMessage(error.response?.data?.message || "Registration failed. Try again.");
+        // Insert the new user
+        const result = await db.query('INSERT INTO users (username, password) VALUES (?, ?)', [username, hashedPassword]);
+
+        if (result.affectedRows === 1) {
+            return res.status(201).json({ message: 'User registered successfully' });
+        } else {
+            return res.status(500).json({ message: 'Failed to register user' });
         }
-    };
 
-    return (
-        <div>
-            <h2>Create Account</h2>
-            <input
-                type="text"
-                placeholder="Username (must start with 'it')"
-                value={username}
-                onChange={(e) => setUsername(e.target.value)}
-            />
-            <input
-                type="password"
-                placeholder="Password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-            />
-            <button onClick={handleRegister}>Register</button>
-            <p>{message}</p>
-        </div>
-    );
+    } catch (error) {
+        console.error(error);
+        return res.status(500).json({ message: 'Server error' });
+    }
 };
 
-export default Register;
 
