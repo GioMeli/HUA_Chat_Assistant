@@ -1,4 +1,4 @@
-const db = require('./config/db');
+const db = require('../backend/config/db');
 
 const register = async (req, res) => {
     const { username, password } = req.body;
