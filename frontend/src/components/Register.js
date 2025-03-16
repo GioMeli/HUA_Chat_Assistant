@@ -1,27 +1,33 @@
+import { useState } from "react";
 
-const register = async (req, res) => {
-    const { username, password } = req.body;
+const Register = () => {
+    const [username, setUsername] = useState("");
+    const [password, setPassword] = useState("");
 
-    // Check if username and password are provided
-    if (!username || !password) {
-        return res.status(400).json({ message: 'Username and password are required' });
-    }
+    const handleRegister = async (e) => {
+        e.preventDefault();
 
-    try {
-        // Insert user into the database WITHOUT hashing the password
-        const result = await db.query('INSERT INTO users (username, password) VALUES (?, ?)', [username, password]);
+        const response = await fetch("http://localhost:5000/auth/register", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ username, password }),
+        });
 
-        if (result.affectedRows === 1) {
-            return res.status(201).json({ message: 'User registered successfully' });
-        } else {
-            return res.status(500).json({ message: 'Failed to register user' });
-        }
+        const data = await response.json();
+        alert(data.message);
+    };
 
-    } catch (error) {
-        console.error(error);
-        return res.status(500).json({ message: 'Server error' });
-    }
+    return (
+        <div>
+            <h2>Register</h2>
+            <form onSubmit={handleRegister}>
+                <input type="text" placeholder="Username" value={username} onChange={(e) => setUsername(e.target.value)} required />
+                <input type="password" placeholder="Password" value={password} onChange={(e) => setPassword(e.target.value)} required />
+                <button type="submit">Create Account</button>
+            </form>
+        </div>
+    );
 };
 
-module.exports = { register };
+export default Register;
 
