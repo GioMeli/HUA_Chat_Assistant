@@ -2,24 +2,35 @@ const express = require('express');
 const cors = require('cors');
 const session = require('express-session');
 const logger = require('./middleware/logger');
-require('dotenv').config();
-
+const dotenv = require('dotenv');
 const authRoutes = require('./routes/auth');
 const chatRoutes = require('./routes/chat');
+const db = require('./config/db'); // Ensure database connection
+
+dotenv.config();
 
 const app = express();
-app.use(cors());
+
+// Enable CORS with credentials (important for sessions)
+app.use(cors({
+    origin: "http://localhost:3000",
+    credentials: true
+}));
+
 app.use(express.json());
 app.use(logger);
 
 app.use(session({
     secret: process.env.SECRET_KEY,
     resave: false,
-    saveUninitialized: true
+    saveUninitialized: false,
+    cookie: { secure: false, httpOnly: true }
 }));
 
+// Routes
 app.use('/auth', authRoutes);
 app.use('/chat', chatRoutes);
 
-app.listen(5000, () => console.log('Server running on port 5000'));
-
+// Start the server
+const PORT = process.env.PORT || 5000;
+app.listen(PORT, () => console.log(`✅ Server running on port ${PORT}`));
