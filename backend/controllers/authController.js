@@ -1,4 +1,4 @@
-const db = require('../config/db'); // Ensure correct DB connection
+
 
 const db = require("../config/db");
 
