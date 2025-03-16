@@ -1,14 +1,14 @@
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import React from "react";
-import SignIn from './pages/SignIn';
-import Register from './components/Register';
-import Chat from './components/Chat';
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import SignIn from "./components/SignIn";  // Import SignIn
+import Register from "./components/Register";
+import Chat from "./components/Chat";
 
 function App() {
   return (
     <Router>
       <Routes>
-        <Route path="/signin" element={<SignIn />} />
+        <Route path="/" element={<SignIn />} />  {/* Default Page */}
         <Route path="/register" element={<Register />} />
         <Route path="/chat" element={<Chat />} />
       </Routes>
@@ -17,4 +17,3 @@ function App() {
 }
 
 export default App;
-
