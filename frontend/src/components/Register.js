@@ -1,25 +1,16 @@
-const bcrypt = require('bcrypt');
 const db = require('../config/db');
 
 const register = async (req, res) => {
     const { username, password } = req.body;
 
+    // Check if username and password are provided
     if (!username || !password) {
-        return res.status(400).json({ message: 'All fields are required' });
+        return res.status(400).json({ message: 'Username and password are required' });
     }
 
     try {
-        // Check if username already exists
-        const [existingUser] = await db.query('SELECT * FROM users WHERE username = ?', [username]);
-        if (existingUser.length > 0) {
-            return res.status(400).json({ message: 'Username already taken' });
-        }
-
-        // Hash the password
-        const hashedPassword = await bcrypt.hash(password, 10);
-
-        // Insert the new user
-        const result = await db.query('INSERT INTO users (username, password) VALUES (?, ?)', [username, hashedPassword]);
+        // Insert user into the database WITHOUT hashing the password
+        const result = await db.query('INSERT INTO users (username, password) VALUES (?, ?)', [username, password]);
 
         if (result.affectedRows === 1) {
             return res.status(201).json({ message: 'User registered successfully' });
@@ -33,4 +24,5 @@ const register = async (req, res) => {
     }
 };
 
+module.exports = { register };
 
