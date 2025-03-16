@@ -5,7 +5,7 @@ const logger = require('./middleware/logger');
 const dotenv = require('dotenv');
 const authRoutes = require('./routes/auth');
 const chatRoutes = require('./routes/chat');
-const db = require('../config/db'); // Ensure database connection
+const db = require('./config/db'); // Ensure database connection
 
 dotenv.config();
 
